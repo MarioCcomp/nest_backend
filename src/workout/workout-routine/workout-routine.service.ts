@@ -34,5 +34,41 @@ export class WorkoutRoutineService {
 
     }
 
+    async update(id: string, routine: WorkoutRoutine) {
+
+    }
+
+    async deleteRoutine(routineId: string) {
+        return await this.routineModel.findByIdAndDelete(routineId);
+    }
+
+    async updateName(routineId: string, name: string) {
+        const routine: WorkoutRoutineDocument | null = await this.routineModel.findById(routineId);
+        if(routine !== null) {
+            routine.name = name;
+            return await routine.save();
+        }
+    }
+
+    async findByOwnerUsername(username: string) {
+        return await this.routineModel.find({ownerUsername: username});
+    }
+
+    async updatePlannedSets(routineId: string, execiseId: string, newPlannedSets: number) {  // TENHO Q TESTAR SE ISSO TA CERTO
+        const routine = this.routineModel.findById(routineId);
+
+        this.routineModel.updateOne({
+            _id: routineId,
+            "exercises._id": execiseId
+        },
+        {
+            $set: {
+                "exercises.$.plannedSets": newPlannedSets
+            }
+        }
+    );
+    }
+
+
 
 }
